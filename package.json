@@ -1,0 +1,28 @@
+{
+  "name": "top-chef",
+  "version": "1.0.0",
+  "description": "> Eat well and cheaper than usually",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.2",
+    "request": "^2.83.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kawiim/top-chef.git"
+  },
+  "author": "Karim Baali",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kawiim/top-chef/issues"
+  },
+  "homepage": "https://github.com/Kawiim/top-chef#readme"
+}
