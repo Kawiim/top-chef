@@ -1,10 +1,14 @@
 const request = require('request');
 const cheerio = require('cheerio');
 
+
+// TODO : GO ON https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin
+// 1st rqst for nb of pages, then getting all restaurants of each pages instead of the index 
 module.exports = {
     getRestaurantsFrance : function(callback) {
 
-    	var url = 'https://restaurant.michelin.fr/restaurants-etoiles-france/';
+    	var url = 'https://restaurant.michelin.fr/restaurants-etoiles-france/',
+    		restaurantsList = [];
 	    request(url, function(error, response, html){
 	        if(!error){
 
@@ -18,7 +22,7 @@ module.exports = {
 
 				    		$_2('.poi-search-result li .node--poi-card').each(function(i, elm) {
 				    			var title = $_2(this).attr('attr-gtm-title')
-				    			console.log(title)
+				    			restaurantsList.add()
 
 				    		})
 				    	}
