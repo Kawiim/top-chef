@@ -1,41 +1,95 @@
 const request = require('request');
 const cheerio = require('cheerio');
 const fs = require('fs');
+var rp = require('request-promise');
 
 let writeStream = fs.createWriteStream('restaurants.json');
 
+function getRestName(url){
+	var options_rest = {
+	    uri: url,
+	    timeout: 600000,
+ 	    resolveWithFullResponse: true,
+	    transform: function (body) {
+	        return cheerio.load(body);
+	    }
+	};
+
+	return new Promise((resolve, reject) => {
+		rp(options_rest)
+		    .then(function ($) {
+		    	var restaurant = {
+		    		name: $('.restaurant_base-breadcrumbs-list').children().last().children().children().text()
+		    	}
+		        
+				console.log(restaurant)
+				return resolve(restaurant)
+    			//writeStream.write(JSON.stringify(restaurant) + '\n');  
+    		})
+    		.catch(function(err){
+    			console.log(err)
+    			reject(err)
+    		})
+    })
+}
+
+
+
 module.exports = {
-    getRestaurantsFrance : function() {
 
+    loadRestaurants : function() {
     	var url = 'https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin',
-    		nbPages,
-    		pageUrl,
-    		nbSolved = 0,
-    		nbRest = 0
+    		nbPages, pageUrl, pageUrls =[], nbSolved = 0, nbRest = 0, pageRequestPromises = []
 
-	    request(url, function(error, response, html){
-	        if(!error){
-
-	            var $ = cheerio.load(html)
+    	var options = {
+		    uri: url,
+		    timeout: 600000,
+		    transform: function (body) {
+		        return cheerio.load(body);
+		    }
+		};
+		 
+		rp(options)
+		    .then(function ($) {
 	            nbPages = $('ul.pager.mr-pager-first-level-links > li.mr-pager-item.last').prev().children().attr('attr-page-number')
-
+	            
 	            for(var i = 0; i < nbPages; i++){
 	            	pageUrl = 'https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin/page-' + (i+1)
-	            	
-					request(pageUrl, function(error, response, html){
-				    	if(!error){
-				    		var $_2 = cheerio.load(html)
+	            	var options_pages = {
+					    uri: pageUrl,
+					    timeout: 600000,
+					    transform: function (body) {
+					        return cheerio.load(body);
+					    }
+					};
 
-				    		$_2('.poi-search-result li .node--poi-card').each(function(i, elm) {
-				    			var restaurant = {  
-								    name: $_2(this).attr('attr-gtm-title')
-								};
-				    			writeStream.write(JSON.stringify(restaurant) + '\n');  
-				    		})
-				    	}
-				    })
+	            	pageRequestPromises.push(rp(options_pages)
+			            .then(function ($) {
+			                $('div[attr-gtm-type="poi"]').each((index, element) => {
+			                    pageUrls.push('https://restaurant.michelin.fr' + $(element).find('.poi-card-link').attr('href'));
+			                });
+			            })
+			        )
+
 	            }
-	        }
-	    })
+
+	            
+
+		    })
+		    .then(function(){            	
+		    	Promise.all(pageRequestPromises).then(() => {
+		    		console.log(pageUrls.length)
+		    		var promises = pageUrls.map(url => getRestName(url))
+
+		    		Promise.all(promises).then(result => {
+			    		//console.log(result)
+			    		console.log("All promises ended !")
+			    	})
+		    	})
+		    	
+		    })
+		    
     }
 }
+
+
