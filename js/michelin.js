@@ -6,13 +6,7 @@ var mongoose = require('mongoose');
 
 mongoose.connect('mongodb://localhost/topchef');
 
-var restaurantSchema = mongoose.Schema({
-  name: String,
-  address: String,
-  priceRange: String
-});
-
-var Restaurant = mongoose.model('Restaurant', restaurantSchema)
+var Restaurant = require('../models/restaurant');
 
 
 function getRestName(url){
@@ -94,16 +88,28 @@ module.exports = {
 
 		    		Promise.all(promises).then(result => {
 						var restTemp
+						Restaurant.remove({}, function(err) { 
+						   console.log('collection removed') 
+						});
+
+						savingRequestPromises = []
 
 						result.forEach(function(res){
-							restTemp = new Restaurant({name: res.name, address: res.address, priceRange: res.priceRange})
-							restTemp.save(function(err, rest){
-								if(err) return console.error(err)
-							})
+							savingRequestPromises.push(new Promise((resolve, reject) => {
+								restTemp = new Restaurant({name: res.name, address: res.address, priceRange: res.priceRange})
+								restTemp.save(function(err, rest){
+									if(err) return console.error(err)
+									resolve()
+								})
+							}))
+							
 						})
 
-		    			console.log("Scrapping on Michelin is over, let's check the deals on LaFourchette !")
-		    			lafourchette.checkDeals()
+						Promise.all(savingRequestPromises).then(function(err){
+							console.log("Scrapping on Michelin is over, let's check the deals on LaFourchette !")
+		    				lafourchette.checkDeals()
+						})
+		    			
 			    		
 			    	})
 		    	})
