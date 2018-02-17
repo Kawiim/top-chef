@@ -1,9 +1,19 @@
 const request = require('request');
 const cheerio = require('cheerio');
-const fs = require('fs');
+const lafourchette = require('./lafourchette');
 var rp = require('request-promise');
+var mongoose = require('mongoose');
 
-let writeStream = fs.createWriteStream('restaurants.json');
+mongoose.connect('mongodb://localhost/topchef');
+
+var restaurantSchema = mongoose.Schema({
+  name: String,
+  address: String,
+  priceRange: String
+});
+
+var Restaurant = mongoose.model('Restaurant', restaurantSchema)
+
 
 function getRestName(url){
 	var options_rest = {
@@ -24,23 +34,21 @@ function getRestName(url){
 		    		priceRange = $('span[itemprop="priceRange"]').text()
 
 		    	var restaurant = {
-		    		name: name,
-		    		address: address + ", " + postalCode + " " + city,
+		    		name: name, 
+		    		address: address + ", " + postalCode + " " + city, 
 		    		priceRange: priceRange
 		    	}
-		        
+
 				console.log(restaurant)
-				writeStream.write(JSON.stringify(restaurant) + '\n'); 
 				return resolve(restaurant)
     			
     		})
     		.catch(function(err){
-    			console.log(err)
+    			console.error(err)
     			return reject(err)
     		})
     })
 }
-
 
 
 module.exports = {
@@ -77,11 +85,7 @@ module.exports = {
 			                });
 			            })
 			        )
-
 	            }
-
-	            
-
 		    })
 		    .then(function(){            	
 		    	Promise.all(pageRequestPromises).then(() => {
@@ -89,7 +93,17 @@ module.exports = {
 		    		var promises = pageUrls.map(url => getRestName(url))
 
 		    		Promise.all(promises).then(result => {
-		    			console.log("All promises ended !")
+						var restTemp
+
+						result.forEach(function(res){
+							restTemp = new Restaurant({name: res.name, address: res.address, priceRange: res.priceRange})
+							restTemp.save(function(err, rest){
+								if(err) return console.error(err)
+							})
+						})
+
+		    			console.log("Scrapping on Michelin is over, let's check the deals on LaFourchette !")
+		    			lafourchette.checkDeals()
 			    		
 			    	})
 		    	})
