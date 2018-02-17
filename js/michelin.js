@@ -8,7 +8,6 @@ let writeStream = fs.createWriteStream('restaurants.json');
 function getRestName(url){
 	var options_rest = {
 	    uri: url,
-	    timeout: 600000,
  	    resolveWithFullResponse: true,
 	    transform: function (body) {
 	        return cheerio.load(body);
@@ -18,17 +17,26 @@ function getRestName(url){
 	return new Promise((resolve, reject) => {
 		rp(options_rest)
 		    .then(function ($) {
+		    	var name = $('.restaurant_base-breadcrumbs-list').children().last().children().children().text()
+		    		address = $('div[itemprop="address"] > div > div > div > div > .thoroughfare').text()
+		    		city = $('div[itemprop="address"] > div > div > div > div > .locality').text()
+		    		postalCode = $('div[itemprop="address"] > div > div > div > div > .postal-code').text()
+		    		priceRange = $('span[itemprop="priceRange"]').text()
+
 		    	var restaurant = {
-		    		name: $('.restaurant_base-breadcrumbs-list').children().last().children().children().text()
+		    		name: name,
+		    		address: address + ", " + postalCode + " " + city,
+		    		priceRange: priceRange
 		    	}
 		        
 				console.log(restaurant)
+				writeStream.write(JSON.stringify(restaurant) + '\n'); 
 				return resolve(restaurant)
-    			//writeStream.write(JSON.stringify(restaurant) + '\n');  
+    			
     		})
     		.catch(function(err){
     			console.log(err)
-    			reject(err)
+    			return reject(err)
     		})
     })
 }
@@ -43,7 +51,6 @@ module.exports = {
 
     	var options = {
 		    uri: url,
-		    timeout: 600000,
 		    transform: function (body) {
 		        return cheerio.load(body);
 		    }
@@ -82,8 +89,8 @@ module.exports = {
 		    		var promises = pageUrls.map(url => getRestName(url))
 
 		    		Promise.all(promises).then(result => {
-			    		//console.log(result)
-			    		console.log("All promises ended !")
+		    			console.log("All promises ended !")
+			    		
 			    	})
 		    	})
 		    	
