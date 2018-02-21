@@ -12,7 +12,8 @@
     "fs": "0.0.1-security",
     "mongoose": "^5.0.6",
     "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "string-similarity": "^1.2.0"
   },
   "devDependencies": {},
   "scripts": {

@@ -33,7 +33,6 @@ function getRestName(url){
 		    		priceRange: priceRange
 		    	}
 
-				console.log(restaurant)
 				return resolve(restaurant)
     			
     		})
