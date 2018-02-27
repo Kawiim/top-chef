@@ -7,6 +7,7 @@ var stringSimilarity = require('string-similarity');
 const searchRestUrl = "https://m.lafourchette.com/api/restaurant-prediction?name="
 const searchByIdUrl = "https://m.lafourchette.com/api/restaurant/"
 
+
 module.exports = {
     checkDeals : function() {
     	console.log("Start getting deals on LaFourchette...")
@@ -46,8 +47,18 @@ module.exports = {
 
 								rp(options_id)
 									.then(function(body){
-										var rest_data = JSON.parse(body)
-										console.log(rest_data)
+										var deals = JSON.parse(body)
+										if(deals.length > 0) {
+											restaurant.hasDeals = true
+											restaurant.deals = deals
+											restaurant.save(function(err, rest){
+												if(err) return console.error(err)
+											})
+										}
+										
+									})
+									.catch(function(err){
+										console.log(err + options_id.uri)
 									})
 
 							}
@@ -55,10 +66,13 @@ module.exports = {
 						}
 						
 					})
-
-
+					.catch(function(err){
+						console.log(err + options.uri)
+					})
 			})
 
-		});
+		})
+
+		
     }
 }
