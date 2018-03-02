@@ -10,7 +10,7 @@ const searchByIdUrl = "https://m.lafourchette.com/api/restaurant/"
 
 module.exports = {
     checkDeals : function() {
-    	console.log("Start getting deals on LaFourchette...")
+    	console.log("[LaFourchette] Start getting deals for starred restaurants...")
     	Restaurant.find({}, function(err, restaurants) {
 			if (err) throw err;
 
@@ -48,12 +48,21 @@ module.exports = {
 								rp(options_id)
 									.then(function(body){
 										var deals = JSON.parse(body)
+										var specialOffers = []
 										if(deals.length > 0) {
-											restaurant.hasDeals = true
-											restaurant.deals = deals
-											restaurant.save(function(err, rest){
-												if(err) return console.error(err)
+											deals.forEach(function(deal) {
+												if(deal.is_special_offer){
+													specialOffers.push(deal)
+												}
 											})
+											if(specialOffers.length > 0){
+												restaurant.hasDeals = true
+												restaurant.deals = deals
+												restaurant.save(function(err, rest){
+													if(err) return console.error(err)
+												})
+											}
+											
 										}
 										
 									})

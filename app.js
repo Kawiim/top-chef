@@ -3,7 +3,7 @@ const app = express();
 const michelin = require('./js/michelin');
 const lafourchette = require('./js/lafourchette');
 
-const enable_michelin_scrapping = false;
+const enable_michelin_scrapping = false
 
 app.get('/', function (req, res) {
 	res.send('temp')
@@ -14,7 +14,9 @@ app.listen(3000, function () {
 
 	if(enable_michelin_scrapping) {
 		michelin.loadRestaurants()
-	} 
+	} else {
+		lafourchette.checkDeals()
+	}
 
-	lafourchette.checkDeals()
+	
 })
