@@ -1,4 +1,3 @@
-const request = require('request');
 const cheerio = require('cheerio');
 const lafourchette = require('./lafourchette');
 var rp = require('request-promise');
@@ -22,10 +21,10 @@ function getRestName(url){
 		rp(options_rest)
 		    .then(function ($) {
 		    	var name = $('.restaurant_base-breadcrumbs-list').children().last().children().children().text()
-		    		address = $('div[itemprop="address"] > div > div > div > div > .thoroughfare').text()
-		    		city = $('div[itemprop="address"] > div > div > div > div > .locality').text()
-		    		postalCode = $('div[itemprop="address"] > div > div > div > div > .postal-code').text()
-		    		priceRange = $('span[itemprop="priceRange"]').text()
+		    	var	address = $('div[itemprop="address"] > div > div > div > div > .thoroughfare').text()
+		    	var	city = $('div[itemprop="address"] > div > div > div > div > .locality').text()
+		    	var	postalCode = $('div[itemprop="address"] > div > div > div > div > .postal-code').text()
+		    	var	priceRange = $('span[itemprop="priceRange"]').text()
 
 		    	count++
 		    	console.log(count)
@@ -45,10 +44,10 @@ function getRestName(url){
     			rp(options_rest)
 				    .then(function ($) {
 				    	var name = $('.restaurant_base-breadcrumbs-list').children().last().children().children().text()
-				    		address = $('div[itemprop="address"] > div > div > div > div > .thoroughfare').text()
-				    		city = $('div[itemprop="address"] > div > div > div > div > .locality').text()
-				    		postalCode = $('div[itemprop="address"] > div > div > div > div > .postal-code').text()
-				    		priceRange = $('span[itemprop="priceRange"]').text()
+				    	var	address = $('div[itemprop="address"] > div > div > div > div > .thoroughfare').text()
+				    	var	city = $('div[itemprop="address"] > div > div > div > div > .locality').text()
+				    	var	postalCode = $('div[itemprop="address"] > div > div > div > div > .postal-code').text()
+				    	var	priceRange = $('span[itemprop="priceRange"]').text()
 
 				    	count++
 				    	console.log(count)
@@ -82,7 +81,7 @@ module.exports = {
 		});
 
     	var url = 'https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin',
-    		nbPages, pageUrl, pageUrls =[], nbSolved = 0, nbRest = 0, pageRequestPromises = []
+    		nbPages, pageUrl, pageUrls =[], pageRequestPromises = []
 
     	var options = {
 		    uri: url,

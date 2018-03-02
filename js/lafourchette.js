@@ -1,8 +1,7 @@
-const request = require('request');
-const cheerio = require('cheerio');
+var stringSimilarity = require('string-similarity');
 var Restaurant = require('../models/restaurant');
 var rp = require('request-promise');
-var stringSimilarity = require('string-similarity');
+
 
 const searchRestUrl = "https://m.lafourchette.com/api/restaurant-prediction?name="
 const searchByIdUrl = "https://m.lafourchette.com/api/restaurant/"
@@ -57,7 +56,7 @@ module.exports = {
 											})
 											if(specialOffers.length > 0){
 												restaurant.hasDeals = true
-												restaurant.deals = deals
+												restaurant.deals = specialOffers
 												restaurant.save(function(err, rest){
 													if(err) return console.error(err)
 												})
