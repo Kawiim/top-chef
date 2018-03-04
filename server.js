@@ -16,19 +16,39 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get('/starred', function (req, res) {
-	Restaurant.find({}, function(err, restaurants) {
-		if (err) throw err;
-		res.setHeader('Content-Type', 'application/json');
-		res.send(JSON.stringify(restaurants))
-	})
+app.get('/starred/:restaurantName', function (req, res) {
+	var name = req.params.restaurantName;
+	if(name == "all"){
+		Restaurant.find({}, function(err, restaurants) {
+			if (err) throw err;
+			res.setHeader('Content-Type', 'application/json');
+			res.send(JSON.stringify(restaurants))
+		})
+	} else {
+		Restaurant.find({"name" : {$regex : ".*"+name+".*"}}, function(err, restaurants) {
+			if (err) throw err;
+			res.setHeader('Content-Type', 'application/json');
+			res.send(JSON.stringify(restaurants))
+		})
+	}
+	
 })
 
-app.get('/deals', function (req, res) {
-	Restaurant.find({hasDeals: true}, function(err, restaurants) {
-		if (err) throw err;
-		res.send(restaurants)
-	})
+app.get('/deals/:restaurantName', function (req, res) {
+	var name = req.params.restaurantName;
+	if(name == "all"){
+		Restaurant.find({hasDeals: true}, function(err, restaurants) {
+			if (err) throw err;
+			res.setHeader('Content-Type', 'application/json');
+			res.send(JSON.stringify(restaurants))
+		})
+	} else {
+		Restaurant.find({hasDeals: true, "name" : {$regex : ".*"+name+".*"}}, function(err, restaurants) {
+			if (err) throw err;
+			res.setHeader('Content-Type', 'application/json');
+			res.send(JSON.stringify(restaurants))
+		})
+	}
 })
 
 app.listen(6969, function () {

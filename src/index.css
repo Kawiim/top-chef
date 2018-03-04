@@ -61,3 +61,8 @@ h3 span {
   float: left;
   width: 60%;
 }
+
+#nameInput {
+  width: 70%;
+  margin-bottom: 10px;
+}

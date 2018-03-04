@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-const apiUrl = "http://localhost:6969/starred"
+const apiUrl = "http://localhost:6969/starred/"
 
 
 class Starred extends Component {
@@ -10,12 +10,24 @@ class Starred extends Component {
     this.state = {
       starredRest: [],
     };
+
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
-    fetch(apiUrl, { accept: 'application/json' })
+    fetch(apiUrl + "all", { accept: 'application/json' })
       .then(response => response.json())
       .then(data => this.setState({ starredRest: data }));
+  }
+
+  handleChange(event) {
+    var name = "all"
+    if(event.target.value !== "") {
+      name = event.target.value
+    }
+    fetch(apiUrl + name, { accept: 'application/json' })
+    .then(response => response.json())
+    .then(data => this.setState({ starredRest: data }));
   }
 
   render() {
@@ -24,6 +36,9 @@ class Starred extends Component {
       <div>
         <h2>Starred restaurants</h2>
         <p>On this tab, you can find the list of starred restaurants in France !</p>
+        <span>
+          <input id="nameInput" type="text" placeholder="Filter the list by name" onChange={this.handleChange} />
+        </span>
 
         <ul>
           {starredRest.map(rest =>
