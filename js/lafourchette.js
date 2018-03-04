@@ -60,6 +60,12 @@ module.exports = {
 												restaurant.save(function(err, rest){
 													if(err) return console.error(err)
 												})
+											} else {
+												restaurant.hasDeals = false
+												restaurant.deals = []
+												restaurant.save(function(err, rest){
+													if(err) return console.error(err)
+												})
 											}
 											
 										}

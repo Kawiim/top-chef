@@ -27,7 +27,7 @@ class Deals extends Component {
         <ul>
           {deals.map(rest =>
             <li key={rest._id}>
-              <h3>{rest.name}</h3>
+              <h3>{rest.name} <span> {rest.address} </span></h3>
               <ul>
               {rest.deals.map(deal =>
                 <li key={deal.id}>

@@ -10,7 +10,7 @@ import Deals from "./Deals";
  
 class Main extends Component {
   render() {
-    return (
+    return (      
       <HashRouter>
         <div>
           <h1>Top Chef</h1>
@@ -19,7 +19,7 @@ class Main extends Component {
             <li><NavLink to="/starred">Starred Restaurants</NavLink></li>
             <li><NavLink to="/deals">Deals</NavLink></li>
           </ul>
-          <div className="content">
+          <div className="content container">
             <Route exact path="/" component={Home}/>
             <Route path="/starred" component={Starred}/>
             <Route path="/deals" component={Deals}/>
